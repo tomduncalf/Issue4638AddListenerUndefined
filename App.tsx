@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -26,6 +26,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {BSON} from 'realm';
+import {useQuery, useRealm} from './AppWrapper';
 
 const Section: React.FC<{
   title: string;
@@ -57,6 +59,22 @@ const Section: React.FC<{
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
+
+  const realm = useRealm();
+  const users = useQuery('user');
+
+  useEffect(() => {
+    realm.write(() => {
+      realm.create('user', {
+        _id: new BSON.ObjectId(),
+        auth_id: 'string',
+        notification_keys: [],
+        rides: [],
+      });
+    });
+  }, []);
+
+  console.log(users.length);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
